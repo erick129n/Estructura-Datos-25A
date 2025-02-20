@@ -55,7 +55,7 @@ void pausar();
 void menu(int& opcion);
 void menuConversiones(int& opcion);
 bool esdigito(const char* numero); //comprueba que los datos sean digitos
-double* pedirDatosNumericos(const string& datos, const char operador); //pedira datos y devolvera una candena char
+double* pedirDatosNumericos(const string& datos, const char operador); //recibe una cadena y el operador que se realiza la operacion. Y devuelve un arreglo de numeros
 void convertirDatos(const char* cadena, double* variableAGuardar); //Convertira las cadenas para convertirlas en numeros o arreglos numericos para ser operados
 
 int main()
@@ -192,7 +192,6 @@ double* pedirDatosNumericos(const string& datos, const char operador){
     delete cadena;
     return datosNumericos;
 }
-
 
 void convertirDatos(const char* cadena, double* variableAGuardar){
     char* fin;
