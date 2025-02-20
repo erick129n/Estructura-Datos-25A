@@ -1,10 +1,20 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
-
+#include <cstring>
+#include <cstdlib>
+#include <string>
+#include <cstdio>
+#include <cstddef>
 
 #define TIEMPO_MILISEGUNDOS_PAUSADO 1000
 #define TAM_MAXIMO 10
+#define OPERADOR_SUMA "+"
+#define OPERADOR_RESTA "-"
+#define OPERADOR_MULTIPLICAICON "*"
+#define OPERADOR_DIVISION "/"
+#define OPERADOR_RESIDUO "%"
+#define VALOR_POR_DEFECTO 2
 
 
 #ifdef _WIN32
@@ -44,14 +54,9 @@ enum MENU_CONVERSIONES{DEC_BIN=14, BIN_DEC, DEC_OCT, OCT_DEC, DEC_HEX, HEX_DEC,
 void pausar();
 void menu(int& opcion);
 void menuConversiones(int& opcion);
-bool esdigito(char* numero);
-struct Datos{
-    double* numerico[TAM_MAXIMO];
-    char* numConversor[TAM_MAXIMO];
-    bool* todosLosDatosSonDigitos[TAM_MAXIMO];
-};
-
-Datos numericos, sistemaNumerico;
+bool esdigito(const char* numero); //comprueba que los datos sean digitos
+double* pedirDatosNumericos(const string& datos, const char operador); //pedira datos y devolvera una candena char
+void convertirDatos(const char* cadena, double* variableAGuardar); //Convertira las cadenas para convertirlas en numeros o arreglos numericos para ser operados
 
 int main()
 {
@@ -129,7 +134,6 @@ void menu(int& opcion){
 
 }
 
-
 void menuConversiones(int& opcion){
     opcion = 0;
     cout << "Converisones: " << endl;
@@ -148,7 +152,6 @@ void menuConversiones(int& opcion){
 
 }
 
-
 void pausar(){
     cin.ignore();
     cout << "Presiona entrar para continuar . . .";
@@ -156,4 +159,47 @@ void pausar(){
     system(CLEAR);
 }
 
+bool esdigito(const char* cadena) {
+    while (*cadena) {
+        if (!isdigit(*cadena)) {
+            return false;
+        }
+        ++cadena;
+    }
+    return true;
+}
+double* pedirDatosNumericos(const string& datos, const char operador){
+    string subcadena;
+    size_t pos = 0, prev_pos = 0;
+    bool noEsDigito = true;
+    int tamanio = datos.length();
+    double* datosNumericos =  new double [tamanio];
+    char* cadena = new char[tamanio + 1];
 
+    pos = datos.find_first_of(operador);
+    int i  = 0;
+    while (pos != string::npos && noEsDigito) {
+        string scad = datos.substr(prev_pos, pos - prev_pos);
+        strcpy(cadena, scad.c_str());
+        if (!esdigito(cadena)) {
+            noEsDigito = false;
+        }else{
+            convertirDatos(cadena, &datosNumericos[i++]);
+        }
+        prev_pos = pos + 1;
+        pos = datos.find_first_of(operador, prev_pos);
+    }
+    delete cadena;
+    return datosNumericos;
+}
+
+
+void convertirDatos(const char* cadena, double* variableAGuardar){
+    char* fin;
+    *variableAGuardar = strtod(cadena, &fin);
+    if(*fin != '\0'){
+        cout << "Error no se pudo convertir el numero . . ." << endl;
+        cout << "Estableciendo numero por defecto...";
+        *variableAGuardar = VALOR_POR_DEFECTO;
+    }
+}
