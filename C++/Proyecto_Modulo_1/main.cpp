@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <cstddef>
 
+#include "Artimetica.h"
+
 #define TIEMPO_MILISEGUNDOS_PAUSADO 1000
 #define TAM_MAXIMO 10
 #define OPERADOR_SUMA "+"
@@ -15,8 +17,11 @@
 #define OPERADOR_DIVISION "/"
 #define OPERADOR_RESIDUO "%"
 #define VALOR_POR_DEFECTO 2
-
-
+#define STR_SUMA "suma"
+#define STR_RESTA "resta"
+#define STR_MULTIPLICACION "multiplicacion"
+#define STR_DIVISION "division"
+#define STR_RESIDUO "residuo"
 #ifdef _WIN32
 #define CLEAR "cls"
 #elif defined(unix)||defined(__unix__)||defined(__unix)||defined(__APPLE__)||defined(__MACH__)
@@ -54,24 +59,101 @@ enum MENU_CONVERSIONES{DEC_BIN=14, BIN_DEC, DEC_OCT, OCT_DEC, DEC_HEX, HEX_DEC,
 void pausar();
 void menu(int& opcion);
 void menuConversiones(int& opcion);
+
+//operaciones de conversion numerica
 bool esdigito(const char* numero); //comprueba que los datos sean digitos
-double* pedirDatosNumericos(const string& datos, const char operador); //recibe una cadena y el operador que se realiza la operacion. Y devuelve un arreglo de numeros
+double* procesarDatos(const string& datos, const char* operador); //recibe una cadena y el operador que se realiza la operacion. Y devuelve un arreglo de numeros
 void convertirDatos(const char* cadena, double* variableAGuardar); //Convertira las cadenas para convertirlas en numeros o arreglos numericos para ser operados
+void pedirDatos(int opcion, const char* operacion);
+size_t tamanioArreglo;
+
+//funciones que administraran las operaciones
+class AdministrarArtimetico{
+    private:
+        double* numero;
+        string datos;
+
+    public:
+        AdministrarArtimetico() { };
+        AdministrarArtimetico(double* numero,string datos){
+            this-> numero = numero;
+            this-> datos = datos;
+        }
+        double getNumero(){
+            return *numero;
+        }
+        string getDatos(){
+            return datos;
+        }
+        void pedirDatos(int opcion, const char* operacion);
+};
+
+void AdministrarArtimetico::pedirDatos(int opcion, const char* operacion) {
+    string datos;
+    double* numeros = new double[tamanioArreglo];
+    double* resultado;
+    cout << endl;
+    cout << "Nota: si ingresas operadores de otro tipo, la calculadora los ignorara." << endl;
+    cout << "Ingresa datos: ";
+    cin >> datos;
+    //cin.ignore();
+
+    numeros = procesarDatos(datos, operacion);
+
+    switch(opcion) {
+        case SUMA:
+            resultado = operar(numeros, tamanioArreglo, suma_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case RESTA:
+            resultado = operar(numeros, tamanioArreglo, resta_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case MULTIPLICACION:
+            resultado = operar(numeros, tamanioArreglo, multiplicacion_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case DIVISION:
+            resultado = operar(numeros, tamanioArreglo, division_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case RESIDUO:
+            resultado = operar(numeros, tamanioArreglo, residuo_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        default:
+            break;
+    }
+
+    delete[] numeros;
+}
+
+
 
 int main()
 {
     int opcion;
     bool opcSalir = false;
-
+    AdministrarArtimetico admin;
     do{
         opcSalir = true;
         menu(opcion);
         switch(opcion){
-        case SUMA: break;
-        case RESTA: break;
-        case MULTIPLICACION: break;
-        case DIVISION: break;
-        case RESIDUO: break;
+        case SUMA:
+                admin.pedirDatos(opcion, OPERADOR_SUMA);
+             break;
+        case RESTA:
+            admin.pedirDatos(opcion, OPERADOR_RESTA);
+            break;
+        case MULTIPLICACION:
+            admin.pedirDatos(opcion, OPERADOR_MULTIPLICAICON);
+            break;
+        case DIVISION:
+            admin.pedirDatos(opcion, OPERADOR_DIVISION);
+            break;
+        case RESIDUO:
+            admin.pedirDatos(opcion, OPERADOR_RESIDUO);
+            break;
         case X_ELEVADO: break;
         case FACTORIAL: break;
         case X_ELEVADO_Y: break;
@@ -100,7 +182,8 @@ int main()
             pausar();
             break;
         }
-
+        cout << endl;
+        pausar();
     }while(opcSalir);
 
     return 0;
@@ -168,37 +251,37 @@ bool esdigito(const char* cadena) {
     }
     return true;
 }
-double* pedirDatosNumericos(const string& datos, const char operador){
-    string subcadena;
-    size_t pos = 0, prev_pos = 0;
-    bool noEsDigito = true;
-    int tamanio = datos.length();
-    double* datosNumericos =  new double [tamanio];
-    char* cadena = new char[tamanio + 1];
+double* procesarDatos(const string& datos, const char* operador) {
+    tamanioArreglo = 0; // Resetear el tamaño del arreglo de números
+    size_t tamanio = datos.length();
+    double* datosNumericos = new double[tamanio]; // Arreglo dinámico para almacenar los números
+    char* cadena = new char[tamanio + 1];  // Buffer para convertir la cadena a número
+    size_t prev_pos = 0;
+    size_t pos = 0;
 
-    pos = datos.find_first_of(operador);
-    int i  = 0;
-    while (pos != string::npos && noEsDigito) {
+    while ((pos = datos.find_first_of(operador, prev_pos)) != string::npos) {
         string scad = datos.substr(prev_pos, pos - prev_pos);
         strcpy(cadena, scad.c_str());
-        if (!esdigito(cadena)) {
-            noEsDigito = false;
-        }else{
-            convertirDatos(cadena, &datosNumericos[i++]);
+        double numero = strtod(cadena, nullptr);
+        if (numero != 0.0 || (cadena[0] == '0' && cadena[1] == '\0')) {
+            datosNumericos[tamanioArreglo++] = numero;
+        } else {
+            cout << "Error al convertir el número: " << cadena << endl;
         }
+
         prev_pos = pos + 1;
-        pos = datos.find_first_of(operador, prev_pos);
     }
-    delete cadena;
+
+    string scad = datos.substr(prev_pos);
+    strcpy(cadena, scad.c_str());
+    double numero = strtod(cadena, nullptr);
+    if (numero != 0.0 || (cadena[0] == '0' && cadena[1] == '\0')) {
+        datosNumericos[tamanioArreglo++] = numero;
+    } else {
+        cout << "Error al convertir el número: " << cadena << endl;
+    }
+
+    delete[] cadena;
     return datosNumericos;
 }
 
-void convertirDatos(const char* cadena, double* variableAGuardar){
-    char* fin;
-    *variableAGuardar = strtod(cadena, &fin);
-    if(*fin != '\0'){
-        cout << "Error no se pudo convertir el numero . . ." << endl;
-        cout << "Estableciendo numero por defecto...";
-        *variableAGuardar = VALOR_POR_DEFECTO;
-    }
-}
