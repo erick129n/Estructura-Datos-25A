@@ -79,7 +79,7 @@ double FiguraGeometrica::getLado(){
 double FiguraGeometrica::getApotema(){
     double anguloCentral;
     anguloCentral = GRADOS_CIRUCLO/numeroLados;
-    apotema = lado/C_2 * tan(anguloCentral/C_2);
+    apotema = lado/ (C_2*tan(anguloCentral/C_2));
     return apotema;
 }
 

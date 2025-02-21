@@ -17,7 +17,6 @@ void menu(int& opcion);
 void pedirDatosCuadrado(FiguraGeometrica& fig);
 void pedirDatosRectangulo(FiguraGeometrica& fig);
 void pedirDatosPoligono(FiguraGeometrica& fig);
-void conValoresPorDefecto(FiguraGeometrica fig);
 void pausita();
 
 int main()
@@ -50,7 +49,6 @@ int main()
             default: cout << "Opcion no valida vuelve a intentar." << endl; break;
         }
         pausita();
-
     }while(opcion != SALIR);
     return 0;
 }

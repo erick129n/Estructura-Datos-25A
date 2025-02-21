@@ -15,7 +15,6 @@ class FiguraGeometrica
 
         double getAltura();
         double getBase();
-        double getPerimetro();
         double getApotema();
         double getLado();
         double getPerimetro(double base, double altura);
