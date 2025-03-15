@@ -1,12 +1,28 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
+#include <cstring>
+#include <cstdlib>
+#include <string>
+#include <cstdio>
+#include <cstddef>
 
+#include "Artimetica.h"
+#include "ConversionesNumericas.h"
 
 #define TIEMPO_MILISEGUNDOS_PAUSADO 1000
 #define TAM_MAXIMO 10
-
-
+#define OPERADOR_SUMA "+"
+#define OPERADOR_RESTA "-"
+#define OPERADOR_MULTIPLICACION "*"
+#define OPERADOR_DIVISION "/"
+#define OPERADOR_RESIDUO "%"
+#define VALOR_POR_DEFECTO 2
+#define STR_SUMA "suma"
+#define STR_RESTA "resta"
+#define STR_MULTIPLICACION "multiplicacion"
+#define STR_DIVISION "division"
+#define STR_RESIDUO "residuo"
 #ifdef _WIN32
 #define CLEAR "cls"
 #elif defined(unix)||defined(__unix__)||defined(__unix)||defined(__APPLE__)||defined(__MACH__)
@@ -18,20 +34,16 @@
 #ifdef _WIN32
     #include <windows.h>
     void pausita(unsigned int milisegundos){
-        Sleep(milisegundos);                              //hace pausa durante N milisegundos
+        Sleep(milisegundos);
     }
 #else
-//probar esto para linux
     void pausita(unsigned int milisegundos){
         struct timespec tiempo;
-        tiempo.tv_sec = milisegundos / 1000;              //establecer los segundos de pausa
-        tiempo.tv_nsec = (milisegundos % 1000) * 1000000; //establecer los nanosegundos de pausa
-        nanosleep(&tiempo, NULL);                         //hace pausa durante N nanosegundos
-}
+        tiempo.tv_sec = milisegundos / 1000;
+        tiempo.tv_nsec = (milisegundos % 1000) * 1000000;
+        nanosleep(&tiempo, NULL);
+    }
 #endif
-
-
-
 
 using namespace std;
 
@@ -44,29 +56,97 @@ enum MENU_CONVERSIONES{DEC_BIN=14, BIN_DEC, DEC_OCT, OCT_DEC, DEC_HEX, HEX_DEC,
 void pausar();
 void menu(int& opcion);
 void menuConversiones(int& opcion);
-bool esdigito(char* numero);
-struct Datos{
-    double* numerico[TAM_MAXIMO];
-    char* numConversor[TAM_MAXIMO];
-    bool* todosLosDatosSonDigitos[TAM_MAXIMO];
+double* procesarUnDato(const string& datos);
+
+bool esdigito(const char* numero);
+double* procesarDatos(const string& datos, const char* operador);
+void convertirDatos(const char* cadena, double* variableAGuardar);
+void pedirDatos(int opcion, const char* operacion);
+size_t tamanioArreglo;
+
+class AdministrarArtimetico{
+    private:
+        double* numero;
+        string datos;
+
+    public:
+        AdministrarArtimetico() { };
+        AdministrarArtimetico(double* numero,string datos){
+            this-> numero = numero;
+            this-> datos = datos;
+        }
+        double getNumero(){
+            return *numero;
+        }
+        string getDatos(){
+            return datos;
+        }
+        void pedirDatos(int opcion, const char* operacion);
 };
 
-Datos numericos, sistemaNumerico;
+void AdministrarArtimetico::pedirDatos(int opcion, const char* operacion) {
+    string datos;
+    double* numeros = new double[tamanioArreglo];
+    double* resultado;
+    cout << endl;
+    cout << "Nota: si ingresas operadores de otro tipo, la calculadora los ignorara." << endl;
+    cout << "Ingresa datos: ";
+    cin >> datos;
+
+    numeros = procesarDatos(datos, operacion);
+
+    switch(opcion) {
+        case SUMA:
+            resultado = operar(numeros, tamanioArreglo, suma_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case RESTA:
+            resultado = operar(numeros, tamanioArreglo, resta_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case MULTIPLICACION:
+            resultado = operar(numeros, tamanioArreglo, multiplicacion_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case DIVISION:
+            resultado = operar(numeros, tamanioArreglo, division_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        case RESIDUO:
+            resultado = operar(numeros, tamanioArreglo, residuo_op);
+            cout << "Resultado: " << *resultado << endl;
+            break;
+        default:
+            break;
+    }
+
+    delete[] numeros;
+}
 
 int main()
 {
     int opcion;
     bool opcSalir = false;
-
+    AdministrarArtimetico admin;
     do{
         opcSalir = true;
         menu(opcion);
         switch(opcion){
-        case SUMA: break;
-        case RESTA: break;
-        case MULTIPLICACION: break;
-        case DIVISION: break;
-        case RESIDUO: break;
+        case SUMA:
+                admin.pedirDatos(opcion, OPERADOR_SUMA);
+             break;
+        case RESTA:
+            admin.pedirDatos(opcion, OPERADOR_RESTA);
+            break;
+        case MULTIPLICACION:
+            admin.pedirDatos(opcion, OPERADOR_MULTIPLICACION);
+            break;
+        case DIVISION:
+            admin.pedirDatos(opcion, OPERADOR_DIVISION);
+            break;
+        case RESIDUO:
+            admin.pedirDatos(opcion, OPERADOR_RESIDUO);
+            break;
         case X_ELEVADO: break;
         case FACTORIAL: break;
         case X_ELEVADO_Y: break;
@@ -74,8 +154,19 @@ int main()
         case COSENO: break;
         case SENO: break;
         case TANGENTE: break;
-        case DEC_BIN: break;
-        case BIN_DEC: break;
+        case DEC_BIN:
+            break;
+        case BIN_DEC:
+                string datos;
+                double* numeros = new double[tamanioArreglo];
+                cout << endl;
+                cout << "Nota: si ingresas operadores de otro tipo, la calculadora los ignorara." << endl;
+                cout << "Ingresa datos: ";
+                cin >> datos;
+                numeros = procesarUnDato(datos);
+                decimalaBinario(numeros);
+                delete[] numeros;
+            break;
         case DEC_OCT: break;
         case OCT_DEC: break;
         case DEC_HEX: break;
@@ -95,12 +186,12 @@ int main()
             pausar();
             break;
         }
-
+        cout << endl;
+        pausar();
     }while(opcSalir);
 
     return 0;
 }
-
 
 void menu(int& opcion){
     cout << "Calculadora v1.0." << endl;
@@ -126,9 +217,7 @@ void menu(int& opcion){
         menuConversiones(opcion);
         opcion+=CONVERSIONES+1;
     }
-
 }
-
 
 void menuConversiones(int& opcion){
     opcion = 0;
@@ -145,9 +234,7 @@ void menuConversiones(int& opcion){
     cout << "10. Regresar al menu principal" << endl;
     cout << "Selecciona una opcion: ";
     cin >> opcion;
-
 }
-
 
 void pausar(){
     cin.ignore();
@@ -156,4 +243,80 @@ void pausar(){
     system(CLEAR);
 }
 
+bool esdigito(const char* cadena) {
+    while (*cadena) {
+        if (!isdigit(*cadena)) {
+            return false;
+        }
+        ++cadena;
+    }
+    return true;
+}
 
+double* procesarDatos(const string& datos, const char* operador) {
+    tamanioArreglo = 0;
+    size_t tamanio = datos.length();
+    double* datosNumericos = new double[tamanio];
+    char* cadena = new char[tamanio + 1];
+    size_t prev_pos = 0;
+    size_t pos = 0;
+
+    while ((pos = datos.find_first_of(operador, prev_pos)) != string::npos) {
+        string scad = datos.substr(prev_pos, pos - prev_pos);
+        strcpy(cadena, scad.c_str());
+        double numero = strtod(cadena, nullptr);
+        if (numero != 0.0 || (cadena[0] == '0' && cadena[1] == '\0')) {
+            datosNumericos[tamanioArreglo++] = numero;
+        } else {
+            cout << "Error al convertir el número: " << cadena << endl;
+        }
+
+        prev_pos = pos + 1;
+    }
+
+    string scad = datos.substr(prev_pos);
+    strcpy(cadena, scad.c_str());
+    double numero = strtod(cadena, nullptr);
+    if (numero != 0.0 || (cadena[0] == '0' && cadena[1] == '\0')) {
+        datosNumericos[tamanioArreglo++] = numero;
+    } else {
+        cout << "Error al convertir el número: " << cadena << endl;
+    }
+
+    delete[] cadena;
+    return datosNumericos;
+}
+
+double* procesarUnDato(const string& datos){
+    tamanioArreglo = 0;
+    size_t tamanio = datos.length();
+    double* datosNumericos = new double[tamanio];
+    char* cadena = new char[tamanio + 1];
+    size_t prev_pos = 0;
+    size_t pos = 0;
+
+    while ((pos = datos.find_first_of("+-*/", prev_pos)) != string::npos) {
+        string scad = datos.substr(prev_pos, pos - prev_pos);
+        strcpy(cadena, scad.c_str());
+        double numero = strtod(cadena, nullptr);
+        if (numero != 0.0 || (cadena[0] == '0' && cadena[1] == '\0')) {
+            datosNumericos[tamanioArreglo++] = numero;
+        } else {
+            cout << "Error al convertir el número: " << cadena << endl;
+        }
+
+        prev_pos = pos + 1;
+    }
+
+    string scad = datos.substr(prev_pos);
+    strcpy(cadena, scad.c_str());
+    double numero = strtod(cadena, nullptr);
+    if (numero != 0.0 || (cadena[0] == '0' && cadena[1] == '\0')) {
+        datosNumericos[tamanioArreglo++] = numero;
+    } else {
+        cout << "Error al convertir el número: " << cadena << endl;
+    }
+
+    delete[] cadena;
+    return datosNumericos;
+}

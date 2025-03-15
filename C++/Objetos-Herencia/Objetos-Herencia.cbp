@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Proyecto_Modulo_1" />
+		<Option title="Objetos-Herencia" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/Proyecto_Modulo_1" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/Objetos-Herencia" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -17,7 +17,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/Proyecto_Modulo_1" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/Objetos-Herencia" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -34,11 +34,21 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="Artimetica.cpp" />
-		<Unit filename="Artimetica.h" />
-		<Unit filename="ConversionesNumericas.cpp" />
-		<Unit filename="ConversionesNumericas.h" />
+		<Unit filename="include/Dolar.h" />
+		<Unit filename="include/Euro.h" />
+		<Unit filename="include/Moneda.h" />
+		<Unit filename="include/Peso.h" />
+		<Unit filename="include/Yen.h" />
+		<Unit filename="include/Yuan.h" />
 		<Unit filename="main.cpp" />
-		<Extensions />
+		<Unit filename="src/Dolar.cpp" />
+		<Unit filename="src/Euro.cpp" />
+		<Unit filename="src/Moneda.cpp" />
+		<Unit filename="src/Peso.cpp" />
+		<Unit filename="src/Yen.cpp" />
+		<Unit filename="src/Yuan.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
