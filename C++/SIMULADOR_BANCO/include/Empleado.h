@@ -9,6 +9,7 @@ class Empleado
     public:
         Empleado();
         Empleado(char idTurno, Cliente* cliente);
+        Empleado(char idTurno);
         virtual ~Empleado();
         void setCliente(Cliente* cliente);
         Cliente* getCliente() const;

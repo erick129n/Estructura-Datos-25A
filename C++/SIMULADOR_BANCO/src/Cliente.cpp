@@ -7,11 +7,9 @@
 using namespace std;
 
 
-Cliente::Cliente()
-{
-    //ctor
-}
+Cliente::Cliente() {
 
+}
 Cliente::~Cliente()
 {
     //dtor
@@ -22,8 +20,8 @@ void Cliente::setNombre(string nombre){
     this->nombre = nombre;
 }
 
-void Cliente::setIdTurno(char id){
-    this->id = id;
+void Cliente::setIdTurno(char idTurno){
+    this->idTurno = idTurno;
 }
 
 void Cliente::posX(int x){
@@ -34,10 +32,6 @@ void Cliente::posY(int y){
     this->y = y;
 }
 
-void Cliente::setTurno(int turno){
-    this->turno = turno;
-}
-
 void Cliente::setEmpleado(Empleado* empleado){
     this->empleado = empleado;
 }
@@ -46,12 +40,20 @@ void Cliente::setId(int id){
     this->id = id;
 }
 
+void Cliente::setContTurno(int turno){
+    this->turno = turno;
+}
+
+int Cliente::getContTurno(){
+    return turno;
+}
+
 string Cliente::getNombre(){
     return nombre;
 }
 
 char Cliente::getIdTurno(){
-    return id;
+    return idTurno;
 }
 
 int Cliente::getPosX(){
@@ -60,10 +62,6 @@ int Cliente::getPosX(){
 
 int Cliente::getPosY(){
     return y;
-}
-
-int Cliente::getTurno(){
-    return turno;
 }
 
 int Cliente::getId() const{

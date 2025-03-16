@@ -45,19 +45,19 @@ class Lista
             }
         }
 
-        bool removerDelInicio(NODETYPE& valor){
-            if(isEmpty()){
+        bool removerDelInicio(NODETYPE& valor) {
+            if (isEmpty()) {
                 return false;
-            }else{
-                NodoLista<NODETYPE>* tempPtr{primerPtr};
-                if(primerPtr == ultimoPtr){
-                    primerPtr = ultimoPtr = nullptr;
-                }else{
-                    primerPtr = primerPtr->siguientePtr;
+            } else {
+                NodoLista<NODETYPE>* tempPtr{primerPtr};  // Apuntamos al primer nodo
+                if (primerPtr == ultimoPtr) {
+                    primerPtr = ultimoPtr = nullptr;  // Si hay un solo nodo, vaciamos la lista
+                } else {
+                    primerPtr = primerPtr->siguientePtr;  // Avanzamos el puntero
                 }
-                valor = tempPtr->datos;
-                delete tempPtr;
-                return true;
+                valor = tempPtr->datos;  // Copiamos los datos del nodo extraído al cliente
+                delete tempPtr;  // Liberamos la memoria del nodo
+                return true;  // La operación fue exitosa
             }
         }
 
@@ -70,10 +70,10 @@ class Lista
                     primerPtr = ultimoPtr = nullptr;
                 }else{
                     NodoLista<NODETYPE>* actualPtr{primerPtr};
-                    while(tempPtr->siguientePtr != ultimoPtr){
-                        tempPtr = tempPtr->siguientePtr;
+                    while(actualPtr->siguientePtr != ultimoPtr){
+                        actualPtr = actualPtr->siguientePtr;
                     }
-                    ultimoPtr = actualPte;
+                    ultimoPtr = actualPtr;
                     actualPtr-> siguientePtr = nullptr;
                 }
                 valor = tempPtr->datos;
@@ -88,6 +88,16 @@ class Lista
             return primerPtr == nullptr;
         }
 
+        void print() const{
+            if(isEmpty()){
+                return;
+            }else{
+                NodoLista<NODETYPE>* actualPtr{primerPtr};
+                while(actualPtr != nullptr){
+                    actualPtr = actualPtr->siguientePtr;
+                }
+            }
+        }
     private:
         NodoLista<NODETYPE>* primerPtr{nullptr};
         NodoLista<NODETYPE>* ultimoPtr{nullptr};

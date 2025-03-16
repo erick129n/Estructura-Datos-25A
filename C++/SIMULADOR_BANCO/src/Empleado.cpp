@@ -15,6 +15,10 @@ Empleado::Empleado(char idTurno, Cliente* cliente){
     this->cliente = cliente;
 }
 
+Empleado::Empleado(char idTurno){
+    this->idTurno = idTurno;
+}
+
 void Empleado::setCliente(Cliente* cliente){
     this->cliente = cliente;
 }

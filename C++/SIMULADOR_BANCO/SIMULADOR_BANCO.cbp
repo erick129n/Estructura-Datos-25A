@@ -32,7 +32,20 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="NodoLista.h" />
+		<Unit filename="include/Cliente.h" />
+		<Unit filename="include/Clientes.h" />
+		<Unit filename="include/Cola.h" />
+		<Unit filename="include/Empleado.h" />
+		<Unit filename="include/Lista.h" />
+		<Unit filename="include/NodoLista.h" />
+		<Unit filename="include/Persona.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Cliente.cpp" />
+		<Unit filename="src/Clientes.cpp" />
+		<Unit filename="src/Empleado.cpp" />
+		<Unit filename="src/Lista.cpp" />
+		<Unit filename="src/Persona.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
