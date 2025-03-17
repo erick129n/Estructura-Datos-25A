@@ -52,10 +52,13 @@
 #include <vector>
 #include <ctime>
 #include <sstream>
+#include <iomanip>
+
 #include "Cola.h"
 #include "Cliente.h"
 #include "Empleado.h"
 #include "AdmTurnos.h"
+#include "DireccionPuntero.h"
 
 
 
@@ -75,18 +78,23 @@ enum MENUPRINCIPAL{ENCOLAR=1, SOLICITAR_TICKET, ENVIAR_A_COLA, REGISTRO_ATM, SAL
 
 void inicializarPrograma();
 void menuOpciones(int& opcion);
+
+void pantallaDeTurnos();
+void menuAndondeSeDirige();
+string converirACadena(char id, int cont);
 bool validarEnteros(int& dato);
+int generarTiempoAleatorio();
+
 void encolarClientes();
 void pedirDatosCliente(Cliente& cliente);
-void menuAndondeSeDirige();
 void solicitarTickets();
 void dirigirClienteACola(Cliente& cliente);
-string converirACadena(char id, int cont);
-void pantallaDeTurnos();
+
+
 void enviarClienteAempleado();
 bool lasColasTienenDatos();
 bool quitarClientes();
-int generarTiempoAleatorio();
+
 void pedirDatosParaAtm(Cliente& cliente);
 void registroParaAtm();
 bool vaciarColaATM();
@@ -106,12 +114,14 @@ Cola <Cliente> colaGerente; //cola para genrente
 Cola <Cliente> ATM; //cola especial de cajero automatico
 vector <string> listaTurnos;
 
+
 AdmTurnos turnos;
 
 int contadorId;
 int contadores[MAX_CONTADORES]; //estos contadores seran los que tendra cada pila de objetos
 int contadorAtm;
-
+int posicionX[2]; //creamos un arreglo de dos dimesiones que contenga las posiciones x y
+int posicionY[2]; //creamos un arreglo de dos dimesiones que contenga las posiciones x y
 ///VERSION SIN ANIMACIONES
 int main()
 {
@@ -158,7 +168,7 @@ int main()
             //si no eligio ninguna de las opciones el programa regresara
             cout << "Opcion invalida vuelve a intentar. . . " <<endl;
             Sleep(UN_SEGUNDO);
-            system(CLEAR);
+            clearArea(0, 0, 40, 10);
             break;
         }
         system(CLEAR);
@@ -178,12 +188,12 @@ void inicializarPrograma(){
 }
 
 void menuOpciones(int& opcion){
-    cout << "Simulador de banco v.B.1.0" << endl;
+    cout << "Simulador de banco v.B.2.0"  << endl;
     cout << ENCOLAR <<") Encolar clientes" << endl;
     cout << SOLICITAR_TICKET << ") Solicitar ticket a recepcion" << endl;
     cout << ENVIAR_A_COLA << ") Enviar a cola general de atencion" << endl;
     cout << REGISTRO_ATM << ") Registro y encolado de clientes ATM" << endl;
-    cout << SALIR << ") Salir" << endl;
+    cout << SALIR << ") Salir"  << endl;
     cout << "Elige una opcion: ";
     validarEnteros(opcion);
 }
@@ -206,20 +216,23 @@ bool validarEnteros(int& dato){
 
 void encolarClientes(){
     int cantidad;
-    cout << "Dame la cantidad de clientes: ";
+    gotoxy(40, 0); cout << "Dame la cantidad de clientes: ";
     validarEnteros(cantidad);
     for(int  i = 0 ; i < cantidad ; i++){
         Cliente cliente;
         pedirDatosCliente(cliente); //llenamos los datos del cliente
+        clearArea(40, 1, 40, 10); //limpia la entrada de datos
         colaEntrada.enqueue(cliente); //despues los encolamos
+        //animacion donde entra el cliente
+
     }
 
 }
 
 void menuAndondeSeDirige(){
-    cout << "1) Caja" << endl;
-    cout << "2) Atencion a clientes" << endl;
-    cout << "3) Gerente" << endl;
+    gotoxy(40, 2); cout << "1) Caja" << endl;
+    gotoxy(40, 3); cout << "2) Atencion a clientes" << endl;
+    gotoxy(40, 4); cout << "3) Gerente" << endl;
 }
 
 void pedirDatosCliente(Cliente& cliente) {
@@ -227,12 +240,12 @@ void pedirDatosCliente(Cliente& cliente) {
     int opcion;
     char seleccion;
     int turno;
-    cout << "Dame el nombre del cliente: ";
+    gotoxy(40, 1); cout << "Dame el nombre del cliente: ";
     cin >> nombre; ///hacer funcion que valida que sean caracteres
     cin.get();  // Limpiar el buffer
 
     menuAndondeSeDirige();
-    cout << "A donde se dirige: ";
+    gotoxy(40, 5); cout << "A donde se dirige: ";
     validarEnteros(opcion);
 
     // Asignar turno según la opción elegida
@@ -411,7 +424,6 @@ bool vaciarColaATM(){
     }
 
 }
-
 
 
 
