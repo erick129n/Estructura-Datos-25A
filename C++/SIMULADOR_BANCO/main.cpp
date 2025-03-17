@@ -53,6 +53,7 @@
 #include <ctime>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 #include <chrono>
 #include <thread>
@@ -62,6 +63,7 @@
 #include "Empleado.h"
 #include "AdmTurnos.h"
 #include "DireccionPuntero.h"
+#include "Animaciones.h"
 
 
 
@@ -103,9 +105,6 @@ void registroParaAtm();
 bool vaciarColaATM();
 
 
-void animarPersona(Cliente& cliente);
-void moverPersonaje(int x, int* y, int& ban);
-
 //inicialiacion de los empleados
 Empleado gerente(ID_GERENTE);
 Empleado atencionCliente(ID_ATENCION_CLIENTE);
@@ -141,11 +140,15 @@ int main()
         menuOpciones(opcion);
         switch(opcion){
         case ENCOLAR:
-            encolarClientes();
+            personajeRecepcionista(); // muestra un recepcionista
+            encolarClientes(); // encola los clientes y los anima
+
             break;
         case SOLICITAR_TICKET:
             solicitarTickets(); //mostrara y guardara los clientes en las colas
-            cin.get();
+            hideCursor(DESACTIVAR);
+            cin.ignore();
+            hideCursor(ACTIVAR);
             break;
         case ENVIAR_A_COLA:
 
@@ -176,8 +179,9 @@ int main()
             clearArea(0, 0, 40, 10);
             break;
         }
-        system(CLEAR);
-
+        //system(CLEAR); //decartar esta funcion
+        clearArea(0, 0, 110, 10);
+        gotoxy(0, 0);
     }while(continuar);
 
     return 0;
@@ -226,13 +230,14 @@ void encolarClientes(){
     for(int  i = 0 ; i < cantidad ; i++){
         Cliente cliente;
 
-        animarPersona(cliente);//animacion donde entra el cliente
+        animarPersona(cliente, posXInicial);//animacion donde entra el cliente
         pedirDatosCliente(cliente); //llenamos los datos del cliente
         clearArea(40, 1, 40, 10); //limpia la entrada de datos
         colaEntrada.enqueue(cliente); //despues los encolamos
 
     }
-
+    posXInicial += 5; //esto para restaurar deltaTime
+    Sleep(UN_SEGUNDO);
 }
 
 void menuAndondeSeDirige(){
@@ -293,15 +298,22 @@ string converirACadena(char id, int cont){
 
 void solicitarTickets(){
     cin.ignore();
-    cout << "Solicitar tickets" << endl;
-
+    gotox(40); cout << "Solicitar tickets" << endl;
+    int i = 1 ;
+    int tempPosY[3] = {20, 21, 22};
     //esta funcion sera la responsable de mover los clientes a las colas de los empleados
     Cliente cliente;
+
     while (!colaEntrada.estaVacia()) {  // Mientras haya clientes en la cola
         if (colaEntrada.dequeue(cliente)) {  // Extraemos el siguiente cliente
-                 cout << "Turno: " << cliente.getIdTurno() << cliente.getContTurno()
+                 gotoxy(40, i ++);cout << "Turno: " << cliente.getIdTurno() << cliente.getContTurno()
                  << endl;
                  dirigirClienteACola(cliente); //lo mueve a otra cola
+                Sleep(generarTiempoAleatorio());
+                hideCursor(DESACTIVAR);
+                posXInicial += 4;
+                clearArea(posXInicial+1, tempPosY);
+                hideCursor(ACTIVAR);
 
         } else {
             cout << "Error al extraer el cliente de la cola." << endl;
@@ -428,48 +440,4 @@ bool vaciarColaATM(){
         return true;
     }
 
-}
-
-//aqui es donde se realiza la animacion real, recibe como referencia al cliente, para que guarde su posicion
-//aplicamos tambien deltatime para que el reloj no afecte en la animacion  del movimiento del personaje
-///PROBABLEMENTE NO NECESITE GUARDAR LAS POSICIONES DE CADA CLIENTE
-void animarPersona(Cliente& cliente) {
-     posXInicial-=4; // para que los clientes no colisionen, se reducen 4 espacios en x
-     int posY[3] = {20, 21, 22}; // son las posiciones donde se situaran las personajes. /Deberan ser costantes
-     cliente.posX(posXInicial); //guarda la posicion
-     cliente.posY(posY);
-     int tempX = cliente.getPosX(); // hacemos una variable que guarde la posicoin de x para mayor flexibilidad
-     static int ban = 1; // una bandera estatica, para que no afecte en el movimiento de los demas personajes
-     hideCursor(DESACTIVAR); //desactivamos el cursor, asi la animacion se vera limpia
-     auto tiempoPrevio = chrono::high_resolution_clock::now();
-     for(int j = 0 ; j < 12 ; j++){
-        auto tiempoActual = chrono::high_resolution_clock::now();
-        chrono::duration<float> deltaTime = tiempoActual - tiempoPrevio; //hacemos la variable detlatime
-        tiempoPrevio = tiempoActual;
-        float velocidad = 10.0f;
-        tempX += velocidad * deltaTime.count(); //calculamos el delta time con respecto a la velocidad de movimiento
-        moverPersonaje(tempX+j, cliente.getPosY(), ban);
-        this_thread::sleep_for(chrono::milliseconds(50)); // pequenio retardo de 50 milisegundos
-     }
-
-     hideCursor(ACTIVAR); //activamos el cursor
-}
-
-
-//esta funcion hace que simule el movimiento
-void moverPersonaje(int x, int* y, int& ban){
-    if (ban == 0) {
-        clearArea(x, y);  // Limpia ANTES de dibujar
-        gotoxy(x, y[0]);   cout << "  0 ";
-        gotoxy(x, y[1]);   cout << " /|\\\n";
-        gotoxy(x, y[2]);   cout << " / \\\n";
-        ban = 1;
-    } else {
-        ban = 0;
-        clearArea(x, y);
-        gotoxy(x, y[0]); cout << "  0";
-        gotoxy(x, y[1]); cout << " /|\\\n";
-        gotoxy(x, y[2]); cout << " //\n";  // Moviendo correctamente la pierna
-
-    }
 }

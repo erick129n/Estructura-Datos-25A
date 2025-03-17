@@ -12,7 +12,7 @@ Cliente::Cliente() {
 }
 Cliente::~Cliente()
 {
-    //dtor
+
 }
 
 
