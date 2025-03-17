@@ -6,6 +6,18 @@
 
 using namespace std;
 
+enum CURSOR{DESACTIVAR= FALSE, ACTIVAR= TRUE};
+
+
+void hideCursor(CURSOR activar){
+    HANDLE hcon;
+    hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(hcon, &cursorInfo);
+    cursorInfo.bVisible = activar;
+    SetConsoleCursorInfo(hcon, &cursorInfo);
+}
+
 void gotoxy(int x, int y){
     HANDLE hcon;
     hcon = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -29,6 +41,14 @@ void clearArea(int x, int y, int ancho, int largo) {
         gotoxy(x, y + i);
         cout << string(ancho, ' '); // Rellena con espacios en blanco
     }
+}
+
+
+//FUNCION SOBRECARGADA PARA LIMPIAR SOLO EL AREA DE LOS PERSONASJES
+void clearArea(int x, int* y){
+    gotoxy(x, y[0]);   cout << "     ";  // Borra la cabeza
+    gotoxy(x, y[1]); cout << "     ";  // Borra el torso y brazos
+    gotoxy(x, y[2]); cout << "     ";  // Borra las piernas
 }
 
 

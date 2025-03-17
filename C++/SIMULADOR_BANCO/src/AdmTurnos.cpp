@@ -9,7 +9,8 @@ AdmTurnos::AdmTurnos()
 
 AdmTurnos::~AdmTurnos()
 {
-    //dtor
+    delete cliente;
+    delete empleado;
 }
 
 

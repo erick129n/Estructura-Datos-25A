@@ -54,6 +54,9 @@
 #include <sstream>
 #include <iomanip>
 
+#include <chrono>
+#include <thread>
+
 #include "Cola.h"
 #include "Cliente.h"
 #include "Empleado.h"
@@ -100,6 +103,9 @@ void registroParaAtm();
 bool vaciarColaATM();
 
 
+void animarPersona(Cliente& cliente);
+void moverPersonaje(int x, int* y, int& ban);
+
 //inicialiacion de los empleados
 Empleado gerente(ID_GERENTE);
 Empleado atencionCliente(ID_ATENCION_CLIENTE);
@@ -120,8 +126,7 @@ AdmTurnos turnos;
 int contadorId;
 int contadores[MAX_CONTADORES]; //estos contadores seran los que tendra cada pila de objetos
 int contadorAtm;
-int posicionX[2]; //creamos un arreglo de dos dimesiones que contenga las posiciones x y
-int posicionY[2]; //creamos un arreglo de dos dimesiones que contenga las posiciones x y
+int posXInicial = 60;
 ///VERSION SIN ANIMACIONES
 int main()
 {
@@ -220,10 +225,11 @@ void encolarClientes(){
     validarEnteros(cantidad);
     for(int  i = 0 ; i < cantidad ; i++){
         Cliente cliente;
+
+        animarPersona(cliente);//animacion donde entra el cliente
         pedirDatosCliente(cliente); //llenamos los datos del cliente
         clearArea(40, 1, 40, 10); //limpia la entrada de datos
         colaEntrada.enqueue(cliente); //despues los encolamos
-        //animacion donde entra el cliente
 
     }
 
@@ -285,7 +291,6 @@ string converirACadena(char id, int cont){
 }
 
 
-///SIGUIENTE IMPLEMENTACION, GUARDARLOS EN COLAS CORRESPONDIENTES
 void solicitarTickets(){
     cin.ignore();
     cout << "Solicitar tickets" << endl;
@@ -425,5 +430,46 @@ bool vaciarColaATM(){
 
 }
 
+//aqui es donde se realiza la animacion real, recibe como referencia al cliente, para que guarde su posicion
+//aplicamos tambien deltatime para que el reloj no afecte en la animacion  del movimiento del personaje
+///PROBABLEMENTE NO NECESITE GUARDAR LAS POSICIONES DE CADA CLIENTE
+void animarPersona(Cliente& cliente) {
+     posXInicial-=4; // para que los clientes no colisionen, se reducen 4 espacios en x
+     int posY[3] = {20, 21, 22}; // son las posiciones donde se situaran las personajes. /Deberan ser costantes
+     cliente.posX(posXInicial); //guarda la posicion
+     cliente.posY(posY);
+     int tempX = cliente.getPosX(); // hacemos una variable que guarde la posicoin de x para mayor flexibilidad
+     static int ban = 1; // una bandera estatica, para que no afecte en el movimiento de los demas personajes
+     hideCursor(DESACTIVAR); //desactivamos el cursor, asi la animacion se vera limpia
+     auto tiempoPrevio = chrono::high_resolution_clock::now();
+     for(int j = 0 ; j < 12 ; j++){
+        auto tiempoActual = chrono::high_resolution_clock::now();
+        chrono::duration<float> deltaTime = tiempoActual - tiempoPrevio; //hacemos la variable detlatime
+        tiempoPrevio = tiempoActual;
+        float velocidad = 10.0f;
+        tempX += velocidad * deltaTime.count(); //calculamos el delta time con respecto a la velocidad de movimiento
+        moverPersonaje(tempX+j, cliente.getPosY(), ban);
+        this_thread::sleep_for(chrono::milliseconds(50)); // pequenio retardo de 50 milisegundos
+     }
+
+     hideCursor(ACTIVAR); //activamos el cursor
+}
 
 
+//esta funcion hace que simule el movimiento
+void moverPersonaje(int x, int* y, int& ban){
+    if (ban == 0) {
+        clearArea(x, y);  // Limpia ANTES de dibujar
+        gotoxy(x, y[0]);   cout << "  0 ";
+        gotoxy(x, y[1]);   cout << " /|\\\n";
+        gotoxy(x, y[2]);   cout << " / \\\n";
+        ban = 1;
+    } else {
+        ban = 0;
+        clearArea(x, y);
+        gotoxy(x, y[0]); cout << "  0";
+        gotoxy(x, y[1]); cout << " /|\\\n";
+        gotoxy(x, y[2]); cout << " //\n";  // Moviendo correctamente la pierna
+
+    }
+}
