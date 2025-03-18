@@ -132,7 +132,7 @@ int main()
     bool continuar;
     int opcion;
     int posYdentroBanco[3] = {7, 8, 9};
-    showVersion("v.B.2.0"); //muestra la version del
+    showVersion("v.B.2.0"); //muestra la version del simulador
     cout << "SIMULADOR DE BANCO EN CONSOLA" << endl;
 
     continuar = false;
@@ -141,6 +141,7 @@ int main()
         opcion = 0;
         continuar = true;
         menuOpciones(opcion);
+
         switch(opcion){
         case ENCOLAR:
             posXInicial = 60; // evaluar si tiene clientes, hacer validacion si tiene mas clientes en espera
@@ -156,8 +157,8 @@ int main()
             break;
         case ENVIAR_A_COLA:
             // ANIMACION DONDE ENTRAN LOS CLIENTES EN CADA COLA.
-            int* tempX;
-            clearArea(0, 0, 120, 79);
+            clearArea(0, 0, 120, 70);
+            showVersion("v.B.2.0"); //muestra la version del simulador
             gotoxy(0, 0);
             posXInicial = 60;
             mostrarLosClientesEnCola(contadores, posXInicial, posYdentroBanco);
@@ -167,9 +168,13 @@ int main()
                 //simula que el cliente se va a con el empleado.
                 enviarClienteAempleado();
                 quitarClientes();
+                /// aqui es donde estara la logica del borrado de clientes en cada lugar de donde estan los empleados
                 //Sleep(UN_SEGUNDO);
             }
+            gotoxy(0, 0); cout << "El banco se ha vaciado. Presiona cualquier tecla para continuar" << endl;
             cin .get();
+            cin.ignore();
+            clearArea(0, 0, 120, 70);
             break;
         case REGISTRO_ATM:
             //logica para registrar clientes al atm y encolarlos
@@ -365,7 +370,7 @@ void enviarClienteAempleado(){
         turnos.asignarClienteAEmpleado(&cliente2, &atencionCliente);
         turnos.asignarClienteAEmpleado(&cliente3, &gerente);
     }else{
-        cout << "el banco se ha vaciado" << endl;
+        return;
     }
 
 }
@@ -379,24 +384,15 @@ bool lasColasTienenDatos(){
 
 //con el tiempo que sera random quitara los clientes en las Colas
 bool quitarClientes(){
-    int i = 0;
-    int posY[3] = {7, 8, 9};
     if(!lasColasTienenDatos()){
-        cout << "El banco se ha vaciado" << endl;
         return false;
     }else{
         //aqui se supone que ira con respecto a la animaciones
         //con tiempos aleatorios simulando que cada cliente dura lo que debe de durar
-        borrarClientes(posXUltimoDentroBanco[0], posY);
-        moverY(posY);
         Sleep(generarTiempoAleatorio());
         turnos.desasignarTurno(&cajero);
-        borrarClientes(posXUltimoDentroBanco[1], posY);
-        moverY(posY);
         Sleep(generarTiempoAleatorio());
         turnos.desasignarTurno(&atencionCliente);
-        borrarClientes(posXUltimoDentroBanco[2], posY);
-        moverY(posY);
         Sleep(generarTiempoAleatorio());
         turnos.desasignarTurno(&gerente);
         return true;

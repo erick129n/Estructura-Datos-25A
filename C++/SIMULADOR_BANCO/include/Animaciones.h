@@ -17,7 +17,7 @@ void moverY(int* y);
 void mostrarGerente(int x);
 void mostrarCajero(int x);
 void mostrarAtencionCliente(int x);
-class Cliente;
+int posFinalX[3];
 
 ///CODIGO LOCO Y ASQUEROSO :(
 //aqui es donde se realiza la animacion real, recibe como referencia al cliente, para que guarde su posicion
@@ -97,14 +97,14 @@ void personajeRecepcionista(){
 }
 
 ///FUNCION DESABILITADA, SI TODO FUNICONA CORRECTAMENTE, MEJORAMOS ESTA FUNCION
-void animarColaClientes(Cola<Cliente>& cola) {
+void animarColaClientes(Cola<Cliente> cola) {
     if (cola.estaVacia()) return; // Si no hay clientes, no animamos nada.
     static int ban = 1;
     Cliente clienteAtendido;
     if (!cola.dequeue(clienteAtendido)) return; // Extraemos al primer cliente de la cola
 
     // Borrar su posición de la pantalla
-    clearArea(clienteAtendido.getPosX(), clienteAtendido.getPosY());
+    clearArea(clienteAtendido.getPosX()+4, clienteAtendido.getPosY());
 
     vector<Cliente> clientesRestantes;
 
@@ -168,6 +168,7 @@ void mostrarLosClientesEnCola(int* contador, int x, int* y) {
             int tempX = x - (j * 5);
             int tempY[3] = {y[0], y[1], y[2]};
             animarPersona(tempX, tempY);  // Pasamos x correctamente
+            posFinalX[i-1] = tempX;
         }
         moverY(y);  // Asegurar que actualiza la posición Y
         gotoxy(x, tempy + 6);  // Esto podría no ser necesario si moverY() ya cambia la posición
