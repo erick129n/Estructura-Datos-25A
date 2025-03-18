@@ -52,4 +52,15 @@ void clearArea(int x, int* y){
 }
 
 
+void showVersion(const char* version){
+    HANDLE hcon;
+    hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(hcon, &csbi);
+    COORD dwPos = {csbi.dwSize.X-sizeof(version), csbi.dwSize.Y-1};
+    SetConsoleCursorPosition(hcon, dwPos);
+    cout << version << endl;
+    gotoxy(0, 0);
+}
+
 #endif // DIRECCIONPUNTERO_H_INCLUDED

@@ -68,7 +68,6 @@
 
 
 
-#define CLEAR "cls"
 #define MAX_CONTADORES 3
 #define UN_SEGUNDO 1000 //conversion en milisegundos
 #define UN_SEGUNDO_Y_MEDIO 1500 //conversion en milisegundos
@@ -126,12 +125,16 @@ int contadorId;
 int contadores[MAX_CONTADORES]; //estos contadores seran los que tendra cada pila de objetos
 int contadorAtm;
 int posXInicial = 60;
+int posXUltimoDentroBanco[3];
 ///VERSION SIN ANIMACIONES
 int main()
 {
     bool continuar;
     int opcion;
+    int posYdentroBanco[3] = {7, 8, 9};
+    showVersion("v.B.2.0"); //muestra la version del
     cout << "SIMULADOR DE BANCO EN CONSOLA" << endl;
+
     continuar = false;
     inicializarPrograma();
     do{
@@ -140,6 +143,7 @@ int main()
         menuOpciones(opcion);
         switch(opcion){
         case ENCOLAR:
+            posXInicial = 60; // evaluar si tiene clientes, hacer validacion si tiene mas clientes en espera
             personajeRecepcionista(); // muestra un recepcionista
             encolarClientes(); // encola los clientes y los anima
 
@@ -151,14 +155,18 @@ int main()
             hideCursor(ACTIVAR);
             break;
         case ENVIAR_A_COLA:
+            // ANIMACION DONDE ENTRAN LOS CLIENTES EN CADA COLA.
+            int* tempX;
+            clearArea(0, 0, 120, 79);
+            gotoxy(0, 0);
+            posXInicial = 60;
+            mostrarLosClientesEnCola(contadores, posXInicial, posYdentroBanco);
 
-            cout << "Los clientes se van a las colas"  << endl;
             //Sleep(UN_SEGUNDO);
             while(lasColasTienenDatos()){
+                //simula que el cliente se va a con el empleado.
                 enviarClienteAempleado();
-                cout << "cliente llego con cajero" << endl;
                 quitarClientes();
-                cout << "cliente se fue del cajero" << endl;
                 //Sleep(UN_SEGUNDO);
             }
             cin .get();
@@ -179,7 +187,6 @@ int main()
             clearArea(0, 0, 40, 10);
             break;
         }
-        //system(CLEAR); //decartar esta funcion
         clearArea(0, 0, 110, 10);
         gotoxy(0, 0);
     }while(continuar);
@@ -192,12 +199,12 @@ void inicializarPrograma(){
     cajero.setCliente(nullptr);
     atencionCliente.setCliente(nullptr);
     for(auto& c : contadores){
-        contadores[c] = 1;
+        contadores[c] = -1;
     }
 }
 
 void menuOpciones(int& opcion){
-    cout << "Simulador de banco v.B.2.0"  << endl;
+    cout << "Simulador de banco Marciano"  << endl;
     cout << ENCOLAR <<") Encolar clientes" << endl;
     cout << SOLICITAR_TICKET << ") Solicitar ticket a recepcion" << endl;
     cout << ENVIAR_A_COLA << ") Enviar a cola general de atencion" << endl;
@@ -323,6 +330,7 @@ void solicitarTickets(){
 
 //mueve a los clientes a las colas correspondientes
 void dirigirClienteACola(Cliente& cliente){
+    //pantallaDeTurnos();
     char idTurno = cliente.getIdTurno();
     switch(idTurno){
         case ID_CAJERO: colaCaja.enqueue(cliente); break;
@@ -371,16 +379,24 @@ bool lasColasTienenDatos(){
 
 //con el tiempo que sera random quitara los clientes en las Colas
 bool quitarClientes(){
+    int i = 0;
+    int posY[3] = {7, 8, 9};
     if(!lasColasTienenDatos()){
         cout << "El banco se ha vaciado" << endl;
         return false;
     }else{
         //aqui se supone que ira con respecto a la animaciones
         //con tiempos aleatorios simulando que cada cliente dura lo que debe de durar
+        borrarClientes(posXUltimoDentroBanco[0], posY);
+        moverY(posY);
         Sleep(generarTiempoAleatorio());
         turnos.desasignarTurno(&cajero);
+        borrarClientes(posXUltimoDentroBanco[1], posY);
+        moverY(posY);
         Sleep(generarTiempoAleatorio());
         turnos.desasignarTurno(&atencionCliente);
+        borrarClientes(posXUltimoDentroBanco[2], posY);
+        moverY(posY);
         Sleep(generarTiempoAleatorio());
         turnos.desasignarTurno(&gerente);
         return true;
