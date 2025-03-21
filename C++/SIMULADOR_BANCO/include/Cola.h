@@ -1,6 +1,7 @@
 #ifndef COLA_H
 #define COLA_H
 
+
 #include "Lista.h"
 
 template<typename QUEUETYPE>
@@ -16,16 +17,17 @@ class Cola : private Lista<QUEUETYPE>
         }
 
         bool dequeue(QUEUETYPE& datos){
-            this->removerDelInicio(daots);
+            return this->removerDelInicio(datos);
         }
 
         bool estaVacia() const{
             return this->isEmpty();
         }
 
-    protected:
+        void imprimirCola() const {
+            this->print();
+        }
 
     private:
 };
-
 #endif // COLA_H

@@ -18,25 +18,26 @@ class Cliente
         void setId(int id);
         void posX(int x);
         void posY(int y);
-        void setTurno(int turno);
         void setEmpleado(Empleado* empleado);
+        void setContTurno(int turno);
+        int getContTurno();
         string getNombre();
         int getId() const;
         int getPosX();
         int getPosY();
-        int getTurno();
         char getIdTurno();
         Empleado* getEmpleado() const;
+
 
 
     private:
 
         string nombre;
         char idTurno;
+        int turno;
         int id;
         int x;
         int y;
-        int turno;
         Empleado* empleado;
 };
 
