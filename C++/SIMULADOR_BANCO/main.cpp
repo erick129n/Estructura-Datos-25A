@@ -141,6 +141,7 @@ int main()
     cout << "SIMULADOR DE BANCO EN CONSOLA" << endl;
 
     continuar = false;
+    setCursorColor(VERDE);
     inicializarPrograma();
     do{
         opcion = 0;
@@ -149,7 +150,6 @@ int main()
 
         switch(opcion){
         case ENCOLAR:
-            setCursorColor(ROJO_CLARO);
             personajeRecepcionista(); // muestra un recepcionista
             encolarClientes(); // encola los clientes y los anima
 
