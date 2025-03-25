@@ -22,7 +22,7 @@ Persona::Persona(const Persona& other) {
 
 
 ostream& operator<<(ostream& os, const Persona& p){
-    os << "ID: "<<p.id << " Nombre: " <<p.nombre;
+    os << "ID: "<<p.id << " Nombre: " <<p.nombre << endl;
     return os;
 }
 

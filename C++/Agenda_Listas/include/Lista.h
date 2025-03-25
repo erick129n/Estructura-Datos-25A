@@ -103,6 +103,33 @@ class Lista
                 cout << endl << endl;
             }
         }
+
+        Lista(const Lista<NODETYPE>& otraLista){
+            primerPtr = ultimoPtr = nullptr;
+            NodoLista<NODETYPE>* actualPtr = otraLista.primerPtr;
+
+            while(actualPtr != nullptr){
+                insertarAlFinal(actualPtr->datos);
+                actualPtr = actualPtr->siguientePtr;
+            }
+        }
+        Lista() {}
+
+        Lista<NODETYPE>& operator=(const Lista<NODETYPE>& lista){
+            if(this != &lista){
+                while(!isEmpty()){
+                    NODETYPE temp;
+                    removerDelInicio(temp);
+                }
+                NodoLista<NODETYPE>* actualPtr = lista.primerPtr;
+                while(actualPtr != nullptr){
+                    insertarAlFinal(actualPtr->datos);
+                    actualPtr = actualPtr->siguientePtr;
+                }
+            }
+
+            return *this;
+        }
     private:
         NodoLista<NODETYPE>* primerPtr{nullptr};
         NodoLista<NODETYPE>* ultimoPtr{nullptr};

@@ -13,7 +13,6 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="C:/Users/USER/OneDrive/Documentos/UDG/Estructuras25A/C++/Agenda_Listas/include" />
 					<Add directory="include" />
 				</Compiler>
 			</Target>
@@ -24,7 +23,6 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="C:/Users/USER/OneDrive/Documentos/UDG/Estructuras25A/C++/Agenda_Listas/include" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
