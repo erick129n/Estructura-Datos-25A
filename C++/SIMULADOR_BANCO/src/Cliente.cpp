@@ -12,7 +12,7 @@ Cliente::Cliente() {
 }
 Cliente::~Cliente()
 {
-
+    //dtor
 }
 
 
@@ -28,10 +28,8 @@ void Cliente::posX(int x){
     this->x = x;
 }
 
-void Cliente::posY(int* y){
-    this->y[0] = y[0];
-    this->y[1] = y[1];
-    this->y[2] = y[2];
+void Cliente::posY(int y){
+    this->y = y;
 }
 
 void Cliente::setEmpleado(Empleado* empleado){
@@ -62,7 +60,7 @@ int Cliente::getPosX(){
     return x;
 }
 
-int* Cliente::getPosY(){
+int Cliente::getPosY(){
     return y;
 }
 

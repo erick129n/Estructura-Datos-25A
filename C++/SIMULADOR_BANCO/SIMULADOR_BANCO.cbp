@@ -39,13 +39,9 @@
 		<Unit filename="include/Empleado.h" />
 		<Unit filename="include/Lista.h" />
 		<Unit filename="include/NodoLista.h" />
-		<Unit filename="include/AdmTurnos.h" />
-		<Unit filename="include/DireccionPuntero.h" />
-		<Unit filename="include/Animaciones.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Cliente.cpp" />
 		<Unit filename="src/Empleado.cpp" />
-		<Unit filename="src/AdmTurnos.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

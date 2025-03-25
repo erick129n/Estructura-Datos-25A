@@ -39,8 +39,6 @@
 
 */
 
-/// ESTE CODIGO SE FUE A LA VERGA XDXDXDXDXDXDXDXDXDXD
-
 #ifndef _WIN32
 #error "Sistema operativo no soportado para este programa"
 #endif // _WIN32
@@ -54,26 +52,18 @@
 #include <vector>
 #include <ctime>
 #include <sstream>
-#include <iomanip>
-#include <cmath>
-
-#include <chrono>
-#include <thread>
-
 #include "Cola.h"
 #include "Cliente.h"
 #include "Empleado.h"
 #include "AdmTurnos.h"
-#include "DireccionPuntero.h"
-#include "Animaciones.h"
 
 
 
 
+#define CLEAR "cls"
 #define MAX_CONTADORES 3
 #define UN_SEGUNDO 1000 //conversion en milisegundos
 #define UN_SEGUNDO_Y_MEDIO 1500 //conversion en milisegundos
-#define MEDIO_SEGUNDO 500 //conversion en milisegundos
 #define ID_GERENTE 'G' //constante que representa al gerente
 #define ID_ATENCION_CLIENTE 'T' //constante que representa a atencion a cliente
 #define ID_CAJERO 'C' //constante que representa al cajero
@@ -85,24 +75,18 @@ enum MENUPRINCIPAL{ENCOLAR=1, SOLICITAR_TICKET, ENVIAR_A_COLA, REGISTRO_ATM, SAL
 
 void inicializarPrograma();
 void menuOpciones(int& opcion);
-
-void pantallaDeTurnos();
-void menuAndondeSeDirige();
-string converirACadena(char id, int cont);
 bool validarEnteros(int& dato);
-int generarTiempoAleatorio();
-
 void encolarClientes();
 void pedirDatosCliente(Cliente& cliente);
+void menuAndondeSeDirige();
 void solicitarTickets();
 void dirigirClienteACola(Cliente& cliente);
-
-
+string converirACadena(char id, int cont);
+void pantallaDeTurnos();
 void enviarClienteAempleado();
 bool lasColasTienenDatos();
 bool quitarClientes();
-void GuardarPosicionesEnX(Cliente& cliente, int& posX);
-
+int generarTiempoAleatorio();
 void pedirDatosParaAtm(Cliente& cliente);
 void registroParaAtm();
 bool vaciarColaATM();
@@ -122,70 +106,44 @@ Cola <Cliente> colaGerente; //cola para genrente
 Cola <Cliente> ATM; //cola especial de cajero automatico
 vector <string> listaTurnos;
 
-
 AdmTurnos turnos;
 
 int contadorId;
 int contadores[MAX_CONTADORES]; //estos contadores seran los que tendra cada pila de objetos
 int contadorAtm;
-int posXInicial = 50;
-int posXFinal = posXInicial;
-int posXInicialDentroBanco[3];
+
 ///VERSION SIN ANIMACIONES
 int main()
 {
     bool continuar;
     int opcion;
-    int posYdentroBanco[3] = {7, 8, 9};
-    showVersion("v.B.2.0"); //muestra la version del simulador
     cout << "SIMULADOR DE BANCO EN CONSOLA" << endl;
-
     continuar = false;
-    setCursorColor(VERDE);
     inicializarPrograma();
     do{
         opcion = 0;
         continuar = true;
         menuOpciones(opcion);
-
         switch(opcion){
         case ENCOLAR:
-            personajeRecepcionista(); // muestra un recepcionista
-            encolarClientes(); // encola los clientes y los anima
-
+            encolarClientes();
             break;
         case SOLICITAR_TICKET:
-            if(colaEntrada.estaVacia()){
-                gotoxy(40, 2); cout << "La entrada esta vacia no hay clientes por atender" << endl;
-                Sleep(UN_SEGUNDO);
-            }else
-                solicitarTickets(); //mostrara y guardara los clientes en las colas
+            solicitarTickets(); //mostrara y guardara los clientes en las colas
+            cin.get();
             break;
         case ENVIAR_A_COLA:
-            // ANIMACION DONDE ENTRAN LOS CLIENTES EN CADA COLA.
-            clearArea(0, 0, 120, 70);
-            showVersion("v.B.2.0"); //muestra la version del simulador
-            gotoxy(0, 0);
 
+            cout << "Los clientes se van a las colas"  << endl;
             //Sleep(UN_SEGUNDO);
-            while(lasColasTienenDatos() && colaEntrada.estaVacia()){
-                mostrarCajero(posXInicial);
-                mostrarAtencionCliente(posXInicial);
-                mostrarGerente(posXInicial);
-                mostrarLosClientesEnCola(contadores, posXInicial, posYdentroBanco);
-               //mostrarLosClientesEnCola(colaCaja);
-               //mostrarLosClientesEnCola(colaAtencionCliente);
-               //mostrarLosClientesEnCola(colaGerente);
-                //simula que el cliente se va a con el empleado.
+            while(lasColasTienenDatos()){
                 enviarClienteAempleado();
+                cout << "cliente llego con cajero" << endl;
                 quitarClientes();
-                /// aqui es donde estara la logica del borrado de clientes en cada lugar de donde estan los empleados
+                cout << "cliente se fue del cajero" << endl;
                 //Sleep(UN_SEGUNDO);
             }
-            gotoxy(0, 0); cout << "El banco se ha vaciado. Presiona cualquier tecla para continuar" << endl;
             cin .get();
-            cin.ignore();
-            clearArea(0, 0, 120, 70);
             break;
         case REGISTRO_ATM:
             //logica para registrar clientes al atm y encolarlos
@@ -200,11 +158,11 @@ int main()
             //si no eligio ninguna de las opciones el programa regresara
             cout << "Opcion invalida vuelve a intentar. . . " <<endl;
             Sleep(UN_SEGUNDO);
-            clearArea(0, 0, 40, 10);
+            system(CLEAR);
             break;
         }
-        clearArea(0, 0, 110, 10);
-        gotoxy(0, 0);
+        system(CLEAR);
+
     }while(continuar);
 
     return 0;
@@ -215,17 +173,17 @@ void inicializarPrograma(){
     cajero.setCliente(nullptr);
     atencionCliente.setCliente(nullptr);
     for(auto& c : contadores){
-        contadores[c] = -1;
+        contadores[c] = 1;
     }
 }
 
 void menuOpciones(int& opcion){
-    cout << "Simulador de banco Banorte"  << endl;
+    cout << "Simulador de banco v.B.1.0" << endl;
     cout << ENCOLAR <<") Encolar clientes" << endl;
-    cout << SOLICITAR_TICKET << ") Solicitar ticket a recepcion" << endl; // quitar opcion
-    cout << ENVIAR_A_COLA << ") Enviar a cola general de atencion" << endl; //quitar opcion
+    cout << SOLICITAR_TICKET << ") Solicitar ticket a recepcion" << endl;
+    cout << ENVIAR_A_COLA << ") Enviar a cola general de atencion" << endl;
     cout << REGISTRO_ATM << ") Registro y encolado de clientes ATM" << endl;
-    cout << SALIR << ") Salir"  << endl;
+    cout << SALIR << ") Salir" << endl;
     cout << "Elige una opcion: ";
     validarEnteros(opcion);
 }
@@ -248,25 +206,20 @@ bool validarEnteros(int& dato){
 
 void encolarClientes(){
     int cantidad;
-    gotoxy(40, 0); cout << "Dame la cantidad de clientes: ";
+    cout << "Dame la cantidad de clientes: ";
     validarEnteros(cantidad);
     for(int  i = 0 ; i < cantidad ; i++){
         Cliente cliente;
-
-        posXFinal = animarPersona(cliente, posXInicial);//animacion donde entra el cliente
         pedirDatosCliente(cliente); //llenamos los datos del cliente
-        clearArea(40, 1, 40, 10); //limpia la entrada de datos
         colaEntrada.enqueue(cliente); //despues los encolamos
-
     }
-    //posXInicial += 5; //inecesario
-    Sleep(UN_SEGUNDO);
+
 }
 
 void menuAndondeSeDirige(){
-    gotoxy(40, 2); cout << "1) Caja" << endl;
-    gotoxy(40, 3); cout << "2) Atencion a clientes" << endl;
-    gotoxy(40, 4); cout << "3) Gerente" << endl;
+    cout << "1) Caja" << endl;
+    cout << "2) Atencion a clientes" << endl;
+    cout << "3) Gerente" << endl;
 }
 
 void pedirDatosCliente(Cliente& cliente) {
@@ -274,12 +227,12 @@ void pedirDatosCliente(Cliente& cliente) {
     int opcion;
     char seleccion;
     int turno;
-    gotoxy(40, 1); cout << "Dame el nombre del cliente: ";
+    cout << "Dame el nombre del cliente: ";
     cin >> nombre; ///hacer funcion que valida que sean caracteres
     cin.get();  // Limpiar el buffer
 
     menuAndondeSeDirige();
-    gotoxy(40, 5); cout << "A donde se dirige: ";
+    cout << "A donde se dirige: ";
     validarEnteros(opcion);
 
     // Asignar turno según la opción elegida
@@ -319,53 +272,32 @@ string converirACadena(char id, int cont){
 }
 
 
+///SIGUIENTE IMPLEMENTACION, GUARDARLOS EN COLAS CORRESPONDIENTES
 void solicitarTickets(){
     cin.ignore();
-    gotox(40); cout << "Solicitar tickets" << endl;
-    int i = 1 ;
-    int nuevaPos=0;
+    cout << "Solicitar tickets" << endl;
+
     //esta funcion sera la responsable de mover los clientes a las colas de los empleados
     Cliente cliente;
     while (!colaEntrada.estaVacia()) {  // Mientras haya clientes en la cola
         if (colaEntrada.dequeue(cliente)) {  // Extraemos el siguiente cliente
-                nuevaPos = cliente.getPosX();
-                 gotoxy(40, i ++);cout << "Turno: " << cliente.getIdTurno() << cliente.getContTurno()
+                 cout << "Turno: " << cliente.getIdTurno() << cliente.getContTurno()
                  << endl;
                  dirigirClienteACola(cliente); //lo mueve a otra cola
-                hideCursor(DESACTIVAR);
-                Sleep(UN_SEGUNDO);
-                clearArea(nuevaPos, cliente.getPosY());
-                if(nuevaPos < 66){
-                    nuevaPos = animarColaClientes(cliente);
-                }
-                Sleep(generarTiempoAleatorio());
-                clearArea(nuevaPos, cliente.getPosY());
-                posXFinal +=4;
-
-                hideCursor(ACTIVAR);
 
         } else {
             cout << "Error al extraer el cliente de la cola." << endl;
         }
     }
-    posXInicial = 50;
 }
 
 //mueve a los clientes a las colas correspondientes
 void dirigirClienteACola(Cliente& cliente){
-    //pantallaDeTurnos();
-    //int posYdentroBanco[3] = {7, 8, 9};
     char idTurno = cliente.getIdTurno();
     switch(idTurno){
-        case ID_CAJERO:
-            colaCaja.enqueue(cliente);
-            break;
-        case ID_ATENCION_CLIENTE:
-            colaAtencionCliente.enqueue(cliente);
-            break;
-        case ID_GERENTE:
-            colaGerente.enqueue(cliente);
-            break;
+        case ID_CAJERO: colaCaja.enqueue(cliente); break;
+        case ID_ATENCION_CLIENTE: colaAtencionCliente.enqueue(cliente); break;
+        case ID_GERENTE: colaGerente.enqueue(cliente); break;
         default: cout << "El cliente " << cliente.getNombre() << " no se le asigno turno" << endl;
     }
 }
@@ -395,7 +327,7 @@ void enviarClienteAempleado(){
         turnos.asignarClienteAEmpleado(&cliente2, &atencionCliente);
         turnos.asignarClienteAEmpleado(&cliente3, &gerente);
     }else{
-        return;
+        cout << "el banco se ha vaciado" << endl;
     }
 
 }
@@ -410,6 +342,7 @@ bool lasColasTienenDatos(){
 //con el tiempo que sera random quitara los clientes en las Colas
 bool quitarClientes(){
     if(!lasColasTienenDatos()){
+        cout << "El banco se ha vaciado" << endl;
         return false;
     }else{
         //aqui se supone que ira con respecto a la animaciones
@@ -479,22 +412,6 @@ bool vaciarColaATM(){
 
 }
 
-void GuardarPosicionesEnX(Cliente& cliente, int& posX){
-    posX -=4;
-    int posFinal = posX;
 
-    int tempX = posX;
-    auto tiempoPrevio = chrono::high_resolution_clock::now();
-    for(int i = 0 ; i < 22 ; i++){
-        auto tiempoActual = chrono::high_resolution_clock::now();
-        chrono::duration<float> deltaTime = tiempoActual - tiempoPrevio; //hacemos la variable detlatime
-        tiempoPrevio = tiempoActual;
-        float velocidad = 11.0f;
-        tempX += velocidad * deltaTime.count();
-        Sleep(50);
-        posFinal = tempX+i;
-    }
-    cliente.posX(posFinal);
 
-}
 
