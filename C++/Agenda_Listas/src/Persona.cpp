@@ -22,11 +22,7 @@ Persona::Persona(const Persona& other) {
 
 
 ostream& operator<<(ostream& os, const Persona& p){
-<<<<<<< HEAD
     os << "ID: "<<p.id << " Nombre: " <<p.nombre << endl;
-=======
-    os << "ID: "<<p.id << " Nombre: " <<p.nombre;
->>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
     return os;
 }
 
