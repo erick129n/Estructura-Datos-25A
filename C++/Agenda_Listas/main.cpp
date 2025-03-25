@@ -3,6 +3,7 @@
 #include "Lista.h"
 #include "Persona.h"
 
+<<<<<<< HEAD
 #ifdef _WIN32
 #define CLEAR "cls"
 #elif defined(unix)||defined(__unix__)||defined(__unix)||defined(__APPLE__)||defined(__MACH__)
@@ -11,6 +12,8 @@
 #error "SO no soportado para limpiar pantalla"
 #endif // _WIN32
 
+=======
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
 
 using namespace std;
 
@@ -23,6 +26,7 @@ void menu(int& opcion);
 void altaPersona();
 void pedirDatosPersona(Persona& persona);
 void buscarID();
+<<<<<<< HEAD
 void buscarNombre();
 void buscarPosicion();
 bool buscarPosicion(Persona& persona);
@@ -31,6 +35,10 @@ bool validarEnteros(int& dato);
 void eliminarContacto();
 void listarAgenda(Lista<Persona> datos);
 void pausita();
+=======
+bool validarEnteros(int& dato);
+void listarAgenda(Lista<Persona> datos);
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
 
 void showPersona(Persona per);
 
@@ -48,21 +56,35 @@ int main()
         switch(opcion){
             case INGRESO: altaPersona(); break;
             case BUSCAR_ID: buscarID(); break;
+<<<<<<< HEAD
             case BUSCAR_NOMBRE: buscarNombre(); break;
             case BUSCAR_POS: buscarPosicion(); break;
             case MODIFICAR: modificarContacto(); break;
+=======
+            case BUSCAR_NOMBRE: break;
+            case BUSCAR_POS: break;
+            case MODIFICAR: break;
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
             case ELIMINAR: break;
             case SALIR: continue;
             default: cout << "Opcion no valida vuelve a intentarlo" << endl; break;
         }
+<<<<<<< HEAD
         pausita();
+=======
+        cin.ignore();
+        system("cls");
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
     }while(opcion != SALIR);
     return 0;
 }
 
 
 void menu(int& opcion){
+<<<<<<< HEAD
     cout << "Agenda v2.0." << endl;
+=======
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
     cout << INGRESO <<") Agregar conacto" << endl;
     cout << BUSCAR_ID <<") Buscar por ID" << endl;
     cout << BUSCAR_NOMBRE <<") Bucar por nombre" << endl;
@@ -76,6 +98,7 @@ void menu(int& opcion){
 }
 
 
+<<<<<<< HEAD
 bool validarEnteros(int& dato) {
     while (true) {
         cin >> dato;
@@ -91,6 +114,23 @@ bool validarEnteros(int& dato) {
 
 
 
+=======
+bool validarEnteros(int& dato){
+    bool entradaValida = false;
+    while(!entradaValida){
+        cin >> dato;
+        if(cin.fail()){
+            cin.clear(); //limpia el estado del error
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); //ignora el resto de la linea
+        }else{
+            entradaValida = true;
+        }
+    }
+    return entradaValida;
+}
+
+
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
 void altaPersona(){
     cout << "Agregar contacto" << endl;
     Persona nuevoContacto;
@@ -131,6 +171,7 @@ void listarAgenda(Lista<Persona> datos){
     }
 }
 
+<<<<<<< HEAD
 void buscarID(){
     cin.ignore();
     int id;
@@ -139,12 +180,23 @@ void buscarID(){
     cout << "? ";
     validarEnteros(id);
     Lista<Persona> tempLista(agenda);
+=======
+/// funcion sin completar
+void buscarID(){
+    int id;
+    agenda.print();
+    cout << "Buscar contacto por ID" << endl;
+    cin >> id;
+    Lista<Persona> tempLista;
+    tempLista = agenda;
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
     while(!tempLista.isEmpty()){
         Persona tempPer;
         tempLista.removerDelInicio(tempPer);
 
         if(id == tempPer.getId()){
             showPersona(tempPer);
+<<<<<<< HEAD
             cin.get();
             return;
         }
@@ -279,11 +331,20 @@ void eliminarContacto() {
     }
 }
 
+=======
+        }
+    }
+    cin.get();
+
+}
+
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
 void showPersona(Persona per){
     cout << "ID:" << per.getId() << endl;
     cout << "Nombre: " << per.getNombre() << endl;
     cout << "Telefono: " << per.getNumeroTelefono() << endl;
 }
+<<<<<<< HEAD
 
 void pausita(){
     cin.ignore();
@@ -292,3 +353,5 @@ void pausita(){
     system(CLEAR);
 
 }
+=======
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1

@@ -103,6 +103,7 @@ class Lista
                 cout << endl << endl;
             }
         }
+<<<<<<< HEAD
 
         Lista(const Lista<NODETYPE>& otraLista){
             primerPtr = ultimoPtr = nullptr;
@@ -130,6 +131,8 @@ class Lista
 
             return *this;
         }
+=======
+>>>>>>> 4ae9422e5b9fc5a6244f280419c63b9eed6310f1
     private:
         NodoLista<NODETYPE>* primerPtr{nullptr};
         NodoLista<NODETYPE>* ultimoPtr{nullptr};
